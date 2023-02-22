@@ -1,6 +1,5 @@
 import os
 import requests
-import requests_cache
 from bs4 import BeautifulSoup
 
 
@@ -17,19 +16,12 @@ def request(url):
 def main():
     url = input("Digite um endereço de página web: ")
     response = request(url)
-
-    html_text = BeautifulSoup(response.text, 'html.parser')
-    header = html_text.find_all(tag)
-
-    n = 0
+    
+    cleantext = BeautifulSoup(response.text, 'lxml').text
 
     cls()
 
-    for header in html_text.find_all(tag):
-        n += 1
-        print("Tag", tag, n, ": ", header)
-
-    print("\nForam encontrados {} tags '{}' na página '{}'". format(n, tag, url))
+    print(cleantext)
 
 
 if __name__ == "__main__":
