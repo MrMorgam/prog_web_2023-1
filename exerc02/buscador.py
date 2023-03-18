@@ -1,23 +1,23 @@
 import requests
 import requests_cache
 from bs4 import BeautifulSoup
+from urllib3.exceptions import InsecureRequestWarning
+from urllib3 import disable_warnings
+
+disable_warnings(InsecureRequestWarning)
 
 requests_cache.install_cache('cache')
 
-def find_word_in_text(word, text):
-    text = text.lower()
-    word = word.lower()
 
-    index = text.find(word)
+def get_soup(url):
+    response = requests.get(url, verify=False)
+    html_content = response.text
+    soup = BeautifulSoup(html_content, "html.parser")
 
-    if index != -1:
-        start = max(0, index - 20)
-        end = min(len(text), index + 20 + len(word))
-        return text[start:end]
-    else:
-        return None
-    
-def count_word_in_text(word, text):
+    return soup 
+
+
+def count_word(word, text):
     text = text.lower()
     word = word.lower()
 
@@ -25,7 +25,8 @@ def count_word_in_text(word, text):
 
     return word_count
 
-def excl_backscapes_from_text(text):
+
+def excl_backscp(text):
     new_text = ''
 
     for i in range(0, len(text)-1):
@@ -36,32 +37,82 @@ def excl_backscapes_from_text(text):
     return new_text
 
 
-def search(keyword, url, depth):
-    response = requests.get(url, verify=False)
-    html_content = response.text
+def keyword_occurances(keyword, url):
+    soup = get_soup(url)
 
-    soup = BeautifulSoup(html_content, "html.parser")
     plain_text = soup.get_text()
+    clean_text = excl_backscp(plain_text)
+    keyword_count = count_word(keyword, clean_text)
 
-    clean_text = excl_backscapes_from_text(plain_text)
+    return keyword_count
+
+
+def get_links(url):
+    soup = get_soup(url)
+
+    links = soup.find_all('a')
     
-    return count_word_in_text(keyword, clean_text)
+    urls = list()
+    
+    for link in links:
+        if str(link.get('href')).startswith('http'):
+            urls.append(link.get('href'))
+
+    return urls
+
+
+def search(url, keyword, depth):
+    data = list()
+
+    links = list()
+    links.append(url)
+
+    if depth > 0:
+        links1 = get_links(url)
+
+        for link in links1:
+            if link not in links:
+                links.append(link)
+
+        if depth > 1:
+            for link in links1:
+                links2 = get_links(link)
+
+                for link in links2:
+                    link = link.lower()
+                    if link not in links and 'localhost' not in link and 'wide.net' not in link:
+                        links.append(link)
+
+    for link in links:
+            links_data = list()
+
+            number_keywords = keyword_occurances(keyword, link)
+            links_data.append(link)
+            links_data.append(number_keywords)
+
+            data.append(links_data)
+
+
+    number_links = 0
+    number_occurrences = 0
+
+    for i in range(0, len(data)):
+        print("Link: {}\nOcorrências: {}".format(data[i][0], data[i][1]))
+        number_links += 1
+        number_occurrences += int(data[i][1])
+    
+
+
+    print("\nTotal de links: {}".format(number_links))
+    print("Total de ocorrências do termo '{}': {}". format(keyword, number_occurrences))
 
 
 def main():
-    keyword = 'reitor'
-    url = 'http://ifpi.edu.br'
-    depth = 1
+    keyword = 'estudo'
+    url = 'https://www.bbc.com/portuguese'
+    depth = 2
 
-    word_count = search(keyword, url, depth)
-
-    
-
-    if word_count > 0:
-        print("O termo '{}' foi encontrado na página {} vezes".format(keyword, word_count))
-        
-    else:
-        print("O termo '{}' não foi encontrada na página".format(keyword))
+    search(url, keyword, depth)
 
 
 if __name__ == '__main__':
