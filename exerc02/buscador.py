@@ -37,7 +37,7 @@ def excl_backscp(text):
     return new_text
 
 
-def keyword_occurances(keyword, url):
+def keyword_occurrences(keyword, url):
     soup = get_soup(url)
 
     plain_text = soup.get_text()
@@ -86,7 +86,7 @@ def search(url, keyword, depth):
     for link in links:
             links_data = list()
 
-            number_keywords = keyword_occurances(keyword, link)
+            number_keywords = keyword_occurrences(keyword, link)
             links_data.append(link)
             links_data.append(number_keywords)
 
@@ -101,7 +101,6 @@ def search(url, keyword, depth):
         number_links += 1
         number_occurrences += int(data[i][1])
     
-
 
     print("\nTotal de links: {}".format(number_links))
     print("Total de ocorrências do termo '{}': {}". format(keyword, number_occurrences))
