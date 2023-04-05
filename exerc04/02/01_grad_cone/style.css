@@ -1,0 +1,4 @@
+body {
+    background-image: conic-gradient(red, green, blue);
+    background-size: 1280px 720px;
+}

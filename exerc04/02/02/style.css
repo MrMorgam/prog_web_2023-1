@@ -1,0 +1,4 @@
+body {
+    background-image: linear-gradient(to right, red, darkorange, yellow, green, blue, indigo, darkviolet);
+    background-size: 1280px 720px;
+}

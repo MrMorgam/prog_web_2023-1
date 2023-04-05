@@ -1,0 +1,18 @@
+body {
+    font-family: Arial;
+}
+
+h1 {
+    color: brown;
+}
+
+h2 {
+    color: darkgreen;
+}
+
+.copyright {
+    font-style: italic;
+    color: darkgreen;
+    font-size: small;
+    text-align: center;
+}
