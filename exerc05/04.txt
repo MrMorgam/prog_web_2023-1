@@ -1,0 +1,20 @@
+textContent: retorna todo texto para formatação contido em um elemento (exclui as tags).
+innerHTLM: retorna todo o texto HTML, incluindo as tags, que está contido em um elemento.
+
+Exemplo:
+
+<html>
+    <body>
+
+        <p id="exemplo"> Este texto é um <strong>exemplo</strong> </p>
+
+        <script>
+            const elem1 = document.getElementById("exemplo").innerHTML;
+            const elem2 = document.getElementById("exemplo").textContent;
+        </script>
+
+    </body>
+</html>
+
+Nesse exemplo, a constante elem1 irá armazenar todo o texto HTML contido no elemento.
+Já a constante elem2 armazenará apenas o conteúdo dentro das tags, sem incluí-las.
